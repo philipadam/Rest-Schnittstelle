@@ -1,0 +1,71 @@
+
+"A framework is an abstraction in which software,
+providing generic functionality, can be selectively
+changed by additional user-written code, thus
+providing application-specific software.
+
+It provides a standard way to build and deploy
+applications and is a universal, reusable software
+environment that provides particular functionality
+as part of a larger software platform to
+facilitate the development of software
+applications, products and solutions.
+
+Software frameworks may include support programs,
+compilers, code libraries, toolsets, and
+application programming interfaces (APIs) that
+bring together all the different components to
+enable development of a project or system."
+
+# Kriterien zur Auswahl eines Frameworks
+
+* Technik
+  - Programmiersprachen
+    + Erlernbarkeit
+	+ Codeerstellung (Interpreter, Compiler, VM mit Bytecode)
+	+ Programmierparadigma (prozedurale, funktionale oder objektorientierte Programmierung)
+  - Performance
+  - Skalierbarkeit
+  - Integrationsfahigkeit (z.B. in bestehende Infrastruktur)
+* Knowhow
+  - Einfachheit der Nutzung
+  - Lernkurve
+  - Notwendiges Vorwissen
+  - Bestehende Erfahrungen
+  - Unterstützung durch KI
+* Lizenz
+  - Nutzungskontext (kommerzielle Nutzung?)
+  - Weitergabe
+  - Kosten pro Entwickler, Firma, Kunde?
+  - Open Source (einsehen, nutzen, ändern, weiterverbreiten)
+  - Copyleft (Weitergabe unter gleichen Bedingungen bei GPL)
+  - Dual Licensing
+* Kosten
+  - Lizenzkosten
+  - Kosten-/Nutzen-Faktor
+* Zukunftssicherheit
+  - Regelmäßige Funktionsupdates
+  - Sicherheitsupdates
+  - Schnelle Reaktion auf Bugs
+  - Status des Framework
+* Funktionsumfang
+  - Schnittstellen
+* Angemessenheit für das Projekt
+  - Umfang des Frameworks
+  - Größe des Teams
+  - Zielplattformen, Infrastruktur
+  - Wünsche der Stakeholder
+  - Compliance (z.B. Datenschutz)
+* Support
+  - Tutorials
+  - Verbreitung
+  - Community
+  - Erfahrungsberichte
+  - Dokumentation
+  - Infos zu typischen Fehlern
+* Tooling
+  - Paketmanagement
+  - Build-Management
+  - Code-Analyse
+  - IDEs
+  - Debugger

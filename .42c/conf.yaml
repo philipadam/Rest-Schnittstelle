@@ -1,0 +1,3 @@
+apis:
+  Vorlage/Todolistenverwaltung_Vorlage.yaml:
+    alias: todo-listen-verwaltung
