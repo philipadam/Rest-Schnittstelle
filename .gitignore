@@ -196,3 +196,7 @@ pyrightconfig.json
 
 # Ignore scanconf.json files in the todo-listen-verwaltung directory
 scan/todo-listen-verwaltung/scanconf.json
+
+# Ignores those files in the .42c/RestApi directory except RestApi.py
+.42c/RestApi/beispiel-server.py
+.42c/RestApi/hello.py
