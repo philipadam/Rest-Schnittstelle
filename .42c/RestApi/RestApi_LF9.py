@@ -67,6 +67,16 @@ def handle_list(list_id):
             new_entry['description'] = ''
         todos.append(new_entry)
         return jsonify(new_entry), 201
+# Endpunkt: DELETE /todo-list/{list_id} - Löscht eine bestehende Todo-Liste mit allen Einträgen
+    elif request.method == 'DELETE':
+        # delete the list and all its entries
+        print('Deleting todo list and all its entries...')
+        # remove all todos for this list
+        global todos
+        todos = [t for t in todos if t['list'] != list_id]
+        # remove the list itself
+        todo_lists.remove(list_item)
+        return '', 204
 
 # Endpunkt: POST /todo-list - Fügt eine neue Todo-Liste hinzu
 @app.route('/todo-list', methods=['POST'])
