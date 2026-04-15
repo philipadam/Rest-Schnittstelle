@@ -37,7 +37,9 @@ def apply_cors_header(response):
     return response
 
 # Endpunkt: GET /todo-list/{list_id} - Liefert alle Einträge einer Todo-Liste zurück
-@app.route('/todo-list/<list_id>', methods=['GET', 'POST'])
+# Endpunkt: POST /todo-list/{list_id} - Fügt einen Eintrag zu einer bestehenden Todo-Liste hinzu
+# Endpunkt: DELETE /todo-list/{list_id} - Löscht eine komplette Todo-Liste mit allen Einträgen
+@app.route('/todo-list/<list_id>', methods=['GET', 'POST', 'DELETE'])
 def handle_list(list_id):
     # find todo list depending on given list id
     list_item = None
@@ -77,6 +79,23 @@ def handle_list(list_id):
         # remove the list itself
         todo_lists.remove(list_item)
         return '', 204
+
+# Endpunkt: DELETE /entry/{entry_id} - Löscht einen einzelnen Eintrag einer Todo-Liste
+@app.route('/entry/<entry_id>', methods=['DELETE'])
+def delete_entry(entry_id):
+    # find the entry by id
+    entry = None
+    for t in todos:
+        if str(t['id']) == entry_id:
+            entry = t
+            break
+    # if entry not found, return 404
+    if not entry:
+        abort(404)
+    # remove the entry
+    print('Deleting todo entry...')
+    todos.remove(entry)
+    return '', 204
 
 # Endpunkt: POST /todo-list - Fügt eine neue Todo-Liste hinzu
 @app.route('/todo-list', methods=['POST'])
