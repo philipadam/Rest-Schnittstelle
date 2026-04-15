@@ -36,13 +36,9 @@ def apply_cors_header(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
-@app.route("/")
-def hello_world():
-    return jsonify({"message": "Todo API is running"})
-
-# Erster Endpunkt: GET /todo-list/{list_id} - Gibt alle Einträge der Todo-Liste mit der angegebenen ID zurück
-@app.route('/todo-list/<list_id>', methods=['GET'])
-def get_list_entries(list_id):
+# Endpunkt: GET /todo-list/{list_id} - Liefert alle Einträge einer Todo-Liste zurück
+@app.route('/todo-list/<list_id>', methods=['GET', 'POST'])
+def handle_list(list_id):
     # find todo list depending on given list id
     list_item = None
     for l in todo_lists:
@@ -52,11 +48,27 @@ def get_list_entries(list_id):
     # if the given list id is invalid, return status code 404
     if not list_item:
         abort(404)
-    # find all todo entries for the todo list with the given id
-    print('Returning todo list entries...')
-    return jsonify([i for i in todos if i['list'] == list_id])
+    if request.method == 'GET':
+        # find all todo entries for the todo list with the given id
+        print('Returning todo list entries...')
+        return jsonify([i for i in todos if i['list'] == list_id])
+    
+# Endpunkt: POST /todo-list/{list_id} - Fügt einen Eintrag zu einer bestehenden Todo-Liste hinzu
+    elif request.method == 'POST':
+        # add a new entry to the existing list
+        new_entry = request.get_json(force=True)
+        print('Got new entry to be added: {}'.format(new_entry))
+        if 'name' not in new_entry:
+            abort(406)  # Not Acceptable, missing required field
+        # create id for new entry, save it and return the entry
+        new_entry['id'] = str(uuid.uuid4())
+        new_entry['list'] = list_id
+        if 'description' not in new_entry:
+            new_entry['description'] = ''
+        todos.append(new_entry)
+        return jsonify(new_entry), 201
 
-# Zweiter Endpunkt: POST /todo-list - Fügt eine neue Todo-Liste hinzu
+# Endpunkt: POST /todo-list - Fügt eine neue Todo-Liste hinzu
 @app.route('/todo-list', methods=['POST'])
 def add_new_list():
     # make JSON from POST data (even if content type is not set correctly)
