@@ -22,10 +22,10 @@ todo_lists = [
     {'id': todo_list_3_id, 'name': 'Privat'},
 ]
 todos = [
-    {'id': todo_1_id, 'name': 'Milch', 'description': '', 'list': todo_list_1_id},
-    {'id': todo_2_id, 'name': 'Arbeitsblätter ausdrucken', 'description': '', 'list': todo_list_2_id},
-    {'id': todo_3_id, 'name': 'Kinokarten kaufen', 'description': '', 'list': todo_list_3_id},
-    {'id': todo_4_id, 'name': 'Eier', 'description': '', 'list': todo_list_1_id},
+    {'id': todo_1_id, 'name': 'Milch', 'description': '', 'list_id': todo_list_1_id, 'user_id': str(uuid.uuid4())},
+    {'id': todo_2_id, 'name': 'Arbeitsblätter ausdrucken', 'description': '', 'list_id': todo_list_2_id, 'user_id': str(uuid.uuid4())},
+    {'id': todo_3_id, 'name': 'Kinokarten kaufen', 'description': '', 'list_id': todo_list_3_id, 'user_id': str(uuid.uuid4())},
+    {'id': todo_4_id, 'name': 'Eier', 'description': '', 'list_id': todo_list_1_id, 'user_id': str(uuid.uuid4())},
 ]
 
 # add some headers to allow cross origin access to the API on this server, necessary for using preview in Swagger Editor!
@@ -49,34 +49,29 @@ def handle_list(list_id):
             break
     # if the given list id is invalid, return status code 404
     if not list_item:
-        abort(404)
+        return jsonify({'message': 'not found'}), 404
     if request.method == 'GET':
-        # find all todo entries for the todo list with the given id
         print('Returning todo list entries...')
-        return jsonify([i for i in todos if i['list'] == list_id])
+        return jsonify([i for i in todos if i['list_id'] == list_id])
     
 # Endpunkt: POST /todo-list/{list_id} - Fügt einen Eintrag zu einer bestehenden Todo-Liste hinzu
     elif request.method == 'POST':
-        # add a new entry to the existing list
         new_entry = request.get_json(force=True)
         print('Got new entry to be added: {}'.format(new_entry))
         if 'name' not in new_entry:
-            abort(406)  # Not Acceptable, missing required field
-        # create id for new entry, save it and return the entry
+            return jsonify({'message': 'invalid data'}), 406
         new_entry['id'] = str(uuid.uuid4())
-        new_entry['list'] = list_id
+        new_entry['list_id'] = list_id
         if 'description' not in new_entry:
             new_entry['description'] = ''
+        new_entry['user_id'] = str(uuid.uuid4())
         todos.append(new_entry)
         return jsonify(new_entry), 201
 # Endpunkt: DELETE /todo-list/{list_id} - Löscht eine bestehende Todo-Liste mit allen Einträgen
     elif request.method == 'DELETE':
-        # delete the list and all its entries
         print('Deleting todo list and all its entries...')
-        # remove all todos for this list
         global todos
-        todos = [t for t in todos if t['list'] != list_id]
-        # remove the list itself
+        todos = [t for t in todos if t['list_id'] != list_id]
         todo_lists.remove(list_item)
         return '', 204
 
@@ -90,24 +85,19 @@ def handle_entry(entry_id):
         if str(t['id']) == entry_id:
             entry = t
             break
-    # if entry not found, return 404
     if not entry:
-        abort(404)
+        return jsonify({'message': 'not found'}), 404
     if request.method == 'PATCH':
-        # update the entry with provided fields
         update_data = request.get_json(force=True)
         print('Got update data: {}'.format(update_data))
-        # check if at least one field is provided
         if not update_data or not any(key in update_data for key in ['name', 'description']):
-            abort(406)  # Not Acceptable, no valid fields to update
-        # update only provided fields
+            return jsonify({'message': 'invalid data'}), 406
         if 'name' in update_data:
             entry['name'] = update_data['name']
         if 'description' in update_data:
             entry['description'] = update_data['description']
         return jsonify(entry), 200
     elif request.method == 'DELETE':
-        # remove the entry
         print('Deleting todo entry...')
         todos.remove(entry)
         return '', 204
@@ -115,10 +105,10 @@ def handle_entry(entry_id):
 # Endpunkt: POST /todo-list - Fügt eine neue Todo-Liste hinzu
 @app.route('/todo-list', methods=['POST'])
 def add_new_list():
-    # make JSON from POST data (even if content type is not set correctly)
     new_list = request.get_json(force=True)
     print('Got new list to be added: {}'.format(new_list))
-    # create id for new list, save it and return the list with id
+    if 'name' not in new_list:
+        return jsonify({'message': 'invalid data'}), 406
     new_list['id'] = str(uuid.uuid4())
     todo_lists.append(new_list)
     return jsonify(new_list), 201
