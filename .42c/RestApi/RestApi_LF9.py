@@ -80,9 +80,10 @@ def handle_list(list_id):
         todo_lists.remove(list_item)
         return '', 204
 
+# Endpunkt: PATCH /entry/{entry_id} - Aktualisiert einen bestehenden Eintrag
 # Endpunkt: DELETE /entry/{entry_id} - Löscht einen einzelnen Eintrag einer Todo-Liste
-@app.route('/entry/<entry_id>', methods=['DELETE'])
-def delete_entry(entry_id):
+@app.route('/entry/<entry_id>', methods=['PATCH', 'DELETE'])
+def handle_entry(entry_id):
     # find the entry by id
     entry = None
     for t in todos:
@@ -92,10 +93,24 @@ def delete_entry(entry_id):
     # if entry not found, return 404
     if not entry:
         abort(404)
-    # remove the entry
-    print('Deleting todo entry...')
-    todos.remove(entry)
-    return '', 204
+    if request.method == 'PATCH':
+        # update the entry with provided fields
+        update_data = request.get_json(force=True)
+        print('Got update data: {}'.format(update_data))
+        # check if at least one field is provided
+        if not update_data or not any(key in update_data for key in ['name', 'description']):
+            abort(406)  # Not Acceptable, no valid fields to update
+        # update only provided fields
+        if 'name' in update_data:
+            entry['name'] = update_data['name']
+        if 'description' in update_data:
+            entry['description'] = update_data['description']
+        return jsonify(entry), 200
+    elif request.method == 'DELETE':
+        # remove the entry
+        print('Deleting todo entry...')
+        todos.remove(entry)
+        return '', 204
 
 # Endpunkt: POST /todo-list - Fügt eine neue Todo-Liste hinzu
 @app.route('/todo-list', methods=['POST'])
