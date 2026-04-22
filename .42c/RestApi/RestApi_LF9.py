@@ -70,7 +70,6 @@ def handle_list(list_id):
 # Endpunkt: DELETE /todo-list/{list_id} - Löscht eine bestehende Todo-Liste mit allen Einträgen
     elif request.method == 'DELETE':
         print('Deleting todo list and all its entries...')
-        global todos
         todos = [t for t in todos if t['list_id'] != list_id]
         todo_lists.remove(list_item)
         return '', 204
