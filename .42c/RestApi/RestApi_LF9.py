@@ -3,10 +3,10 @@ import uuid
 from flask import Flask, request, jsonify, abort
 
 
-# initialize Flask server
+# initialisiere Flask Server
 app = Flask(__name__)
 
-# create unique id for lists, entries
+# erstelle einige Beispiel-IDs für Todo-Listen und Einträge, damit die API direkt mit Beispieldaten getestet werden kann
 todo_list_1_id = '1318d3d1-d979-47e1-a225-dab1751dbe75'
 todo_list_2_id = '3062dc25-6b80-4315-bb1d-a7c86b014c65'
 todo_list_3_id = '44b02e00-03bc-451d-8d01-0c67ea866fee'
@@ -15,7 +15,7 @@ todo_2_id = uuid.uuid4()
 todo_3_id = uuid.uuid4()
 todo_4_id = uuid.uuid4()
 
-# define internal data structures with example data
+# definiere interne Datenstrukturen mit Beispieldaten
 todo_lists = [
     {'id': todo_list_1_id, 'name': 'Einkaufsliste'},
     {'id': todo_list_2_id, 'name': 'Arbeit'},
@@ -28,7 +28,7 @@ todos = [
     {'id': todo_4_id, 'name': 'Eier', 'description': '', 'list_id': todo_list_1_id, 'user_id': str(uuid.uuid4())},
 ]
 
-# add some headers to allow cross origin access to the API on this server, necessary for using preview in Swagger Editor!
+# füge Header hinzu, um Zugriff auf die API auf diesem Server zu ermöglichen, notwendig für die Verwendung der Vorschau im Swagger Editor!
 @app.after_request
 def apply_cors_header(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
@@ -41,13 +41,13 @@ def apply_cors_header(response):
 # Endpunkt: DELETE /todo-list/{list_id} - Löscht eine komplette Todo-Liste mit allen Einträgen
 @app.route('/todo-list/<list_id>', methods=['GET', 'POST', 'DELETE'])
 def handle_list(list_id):
-    # find todo list depending on given list id
+    # finde die Todo-Liste anhand der übergebenen list_id
     list_item = None
     for l in todo_lists:
         if l['id'] == list_id:
             list_item = l
             break
-    # if the given list id is invalid, return status code 404
+    # wenn die übergeben list_id ungültig ist, gebe Statuscode 404 zurück
     if not list_item:
         return jsonify({'message': 'not found'}), 404
     if request.method == 'GET':
@@ -79,7 +79,7 @@ def handle_list(list_id):
 # Endpunkt: DELETE /entry/{entry_id} - Löscht einen einzelnen Eintrag einer Todo-Liste
 @app.route('/entry/<entry_id>', methods=['PATCH', 'DELETE'])
 def handle_entry(entry_id):
-    # find the entry by id
+    # finde den Eintrag anhand der übergebenen entry_id
     entry = None
     for t in todos:
         if str(t['id']) == entry_id:
@@ -115,6 +115,6 @@ def add_new_list():
 
 
 if __name__ == '__main__':
-    # start Flask server
+    # starte Flask Server
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
